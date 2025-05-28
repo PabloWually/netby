@@ -40,4 +40,15 @@ public class ProductRepository : IProductRepository
   {
     return await _context.Products.AnyAsync(p => p.Id == id);
   }
+
+  public async Task UpdateStockAsync(Guid productId, int newStock)
+  {
+    var product = await _context.Products.FindAsync(productId);
+    if (product != null)
+    {
+      product.Stock = newStock;
+      product.UpdatedAt = DateTime.UtcNow;
+      await _context.SaveChangesAsync();
+    }
+  }
 }

@@ -25,6 +25,13 @@ public class ProductsController : ControllerBase
     return Ok(product);
   }
 
+  [HttpGet("{id}/check-stock")]
+  public async Task<ActionResult<bool>> CheckStock(Guid id, [FromQuery] int quantity)
+  {
+    var result = await _productService.HasSufficientStockAsync(id, quantity);
+    return Ok(result);
+  }
+
   [HttpGet("{id}")]
   public async Task<ActionResult<ProductDto>> GetProduct(Guid id)
   {
@@ -39,6 +46,13 @@ public class ProductsController : ControllerBase
   public async Task<IActionResult> DeleteProduct(Guid id)
   {
     await _productService.DeleteAsync(id);
+    return NoContent();
+  }
+
+  [HttpPut("{id}/stock")]
+  public async Task<IActionResult> UpdateStock(Guid id, [FromBody] UpdateStockRequest request)
+  {
+    await _productService.UpdateStockAsync(id, request.Quantity, request.IsAddition);
     return NoContent();
   }
 }

@@ -46,5 +46,22 @@ public class ProductServiceImp : IProductService
 
     await _repository.DeleteAsync(id);
   }
+  public async Task UpdateStockAsync(Guid productId, int quantity, bool isAddition)
+  {
+    var product = await _repository.GetByIdAsync(productId);
+    if (product == null)
+      throw new Exception($"Product with ID {productId} not found");
 
+    var newStock = isAddition ? product.Stock + quantity : product.Stock - quantity;
+
+    if (newStock < 0)
+      throw new InvalidOperationException("Insufficient stock");
+
+    await _repository.UpdateStockAsync(productId, newStock);
+  }
+  public async Task<bool> HasSufficientStockAsync(Guid productId, int requiredQuantity)
+  {
+    var product = await _repository.GetByIdAsync(productId);
+    return product != null && product.Stock >= requiredQuantity;
+  }
 }
