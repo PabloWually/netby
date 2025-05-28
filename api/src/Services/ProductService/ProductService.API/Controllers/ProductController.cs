@@ -12,16 +12,40 @@ public class ProductsController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<IResult> CreateProduct(CreateProductDto createProductDto)
+  public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductDto createProductDto)
   {
     var product = await _productService.CreateAsync(createProductDto);
-    return Results.Ok();
+    return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+  }
+
+  [HttpPut("{id}")]
+  public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, UpdateProductDto updateProductDto)
+  {
+    var product = await _productService.UpdateAsync(id, updateProductDto);
+    return Ok(product);
+  }
+
+  [HttpGet("{id}")]
+  public async Task<ActionResult<ProductDto>> GetProduct(Guid id)
+  {
+    var product = await _productService.GetByIdAsync(id);
+    if (product == null)
+      return NotFound();
+
+    return Ok(product);
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> DeleteProduct(Guid id)
+  {
+    await _productService.DeleteAsync(id);
+    return NoContent();
   }
 }
 
 
 public class UpdateStockRequest
 {
-    public int Quantity { get; set; }
-    public bool IsAddition { get; set; }
+  public int Quantity { get; set; }
+  public bool IsAddition { get; set; }
 }
