@@ -18,6 +18,17 @@ public class TransactionsController : ControllerBase
     return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
   }
 
+  public async Task<ActionResult<PagedResult<ProductDto>>> GetProducts(
+      [FromQuery] int page = 1,
+      [FromQuery] int pageSize = 10,
+      [FromQuery] string? startDate = null,
+      [FromQuery] string? endDate = null,
+      [FromQuery] int? type = null)
+  {
+    var result = await _transactionService.GetAllAsync(page, pageSize, startDate, endDate, type);
+    return Ok(result);
+  }
+
   [HttpGet("{id}")]
   public async Task<ActionResult<ProductDto>> GetTransaction(Guid id)
   {

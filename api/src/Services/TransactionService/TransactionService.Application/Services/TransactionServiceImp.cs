@@ -47,4 +47,39 @@ public class TransactionServiceImp : ITransactionService
     var product = await _repository.GetByIdAsync(id);
     return product != null ? _mapper.Map<TransactionDto>(product) : null;
   }
+  public async Task<PagedResult<TransactionDto>> GetAllAsync(int page, int pageSize, string? dateStart = null, string? dateEnd = null, int? type = null)
+  {
+    var transactions = await _repository.GetAllAsync(page, pageSize, dateStart, dateEnd, type);
+    var totalCount = await _repository.GetTotalCountAsync(dateStart, dateEnd, type);
+
+    var transactionDtos = _mapper.Map<List<TransactionDto>>(transactions);
+
+    foreach (var transactionDto in transactionDtos)
+    {
+      try
+      {
+        if (Guid.TryParse(transactionDto.ProductId, out Guid productId))
+        {
+          var product = await _productServiceClient.GetProductByIdAsync(productId);
+          if (product != null)
+          {
+            transactionDto.ProductName = product.Name;
+            transactionDto.ProductStock = product.Stock;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        transactionDto.ProductName = "Producto no encontrado " + ex;
+      }
+    }
+    return new PagedResult<TransactionDto>
+    {
+      Items = transactionDtos,
+      TotalCount = totalCount,
+      Page = page,
+      PageSize = pageSize
+    };
+  }
+
 }

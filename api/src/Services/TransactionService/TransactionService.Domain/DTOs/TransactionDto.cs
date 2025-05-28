@@ -5,6 +5,7 @@ public class TransactionDto
     public string Type { get; set; } = string.Empty;
     public string ProductId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
+    public int ProductStock { get; set; }
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
     public decimal TotalPrice { get; set; }
