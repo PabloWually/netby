@@ -42,6 +42,17 @@ public class ProductsController : ControllerBase
     return Ok(product);
   }
 
+  [HttpGet]
+  public async Task<ActionResult<PagedResult<ProductDto>>> GetProducts(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? category = null,
+        [FromQuery] string? name = null)
+  {
+    var result = await _productService.GetAllAsync(page, pageSize, category, name);
+    return Ok(result);
+  }
+
   [HttpDelete("{id}")]
   public async Task<IActionResult> DeleteProduct(Guid id)
   {

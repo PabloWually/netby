@@ -6,4 +6,5 @@ public interface IProductService
   Task DeleteAsync(Guid id);
   Task UpdateStockAsync(Guid productId, int quantity, bool isAddition);
   Task<bool> HasSufficientStockAsync(Guid productId, int requiredQuantity);
+  Task<PagedResult<ProductDto>> GetAllAsync(int page, int pageSize, string? category = null, string? name = null);
 }

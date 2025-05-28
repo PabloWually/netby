@@ -51,4 +51,33 @@ public class ProductRepository : IProductRepository
       await _context.SaveChangesAsync();
     }
   }
+  public async Task<IEnumerable<Product>> GetAllAsync(int page, int pageSize, string? category = null, string? name = null)
+  {
+    var query = _context.Products.AsQueryable();
+
+    if (!string.IsNullOrEmpty(category))
+      query = query.Where(p => p.Category.Contains(category));
+
+    if (!string.IsNullOrEmpty(name))
+      query = query.Where(p => p.Name.Contains(name));
+
+    return await query
+      .OrderBy(p => p.Name)
+      .Skip((page - 1) * pageSize)
+      .Take(pageSize)
+      .ToListAsync();
+
+  }
+  public async Task<int> GetTotalCountAsync(string? category = null, string? name = null)
+  {
+    var query = _context.Products.AsQueryable();
+
+    if (!string.IsNullOrEmpty(category))
+      query = query.Where(p => p.Category.Contains(category));
+
+    if (!string.IsNullOrEmpty(name))
+      query = query.Where(p => p.Name.Contains(name));
+
+    return await query.CountAsync();
+  }
 }

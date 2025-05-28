@@ -64,4 +64,17 @@ public class ProductServiceImp : IProductService
     var product = await _repository.GetByIdAsync(productId);
     return product != null && product.Stock >= requiredQuantity;
   }
+  public async Task<PagedResult<ProductDto>> GetAllAsync(int page, int pageSize, string? category = null, string? name = null)
+  {
+    var products = await _repository.GetAllAsync(page, pageSize, category, name);
+    var totalCount = await _repository.GetTotalCountAsync(category, name);
+
+    return new PagedResult<ProductDto>
+    {
+      Items = _mapper.Map<IEnumerable<ProductDto>>(products),
+      TotalCount = totalCount,
+      Page = page,
+      PageSize = pageSize
+    };
+  }
 }
