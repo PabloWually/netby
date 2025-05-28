@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { useGetProducts } from "../../hooks/useGetProducts";
+
 import {
   Box,
   Typography,
@@ -25,6 +25,7 @@ import { useDeleteProducts } from "../../hooks/useDeleteProduct";
 import ProductForm from "./ProductForms";
 import { useUpdateProducts } from "../../hooks/useUpdateProduct";
 import TransactionProductButton from "../transactions/TransactionProductButton";
+import { useGetProducts } from "../../hooks/useGetProducts";
 
 export const ProductsTable = () => {
   const [paginationModel, setPaginationModel] = useState({

@@ -16,6 +16,7 @@ import {
 import { StyledModal } from "../Modal";
 import { useGetProducts } from "../../hooks/useGetProducts";
 
+
 const TRANSACTION_TYPES = {
   PURCHASE: 1,
   SALE: 2,
