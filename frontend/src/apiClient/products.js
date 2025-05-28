@@ -1,6 +1,11 @@
 export const apiProducts = (client) => ({
-  createMessage: async (product) => {
+  createProducts: async (product) => {
     const response = await client.post("/products", product);
+
+    return response.data;
+  },
+  updateProducts: async (product) => {
+    const response = await client.put(`/products/${product.id}`, product);
 
     return response.data;
   },

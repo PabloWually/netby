@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
+import { NewProductButton } from "./NewProductButton";
 
 export const ProductsTable = () => {
   const [paginationModel, setPaginationModel] = useState({
@@ -101,7 +102,7 @@ export const ProductsTable = () => {
     if (filterValue !== undefined || categoryFilter !== undefined) {
       refetch();
     }
-  }, [filterValue, categoryFilter]);
+  }, [filterValue, categoryFilter, paginationModel]);
 
   if (isLoading && !data) {
     return (
@@ -180,6 +181,11 @@ export const ProductsTable = () => {
             >
               Limpiar
             </Button>
+          </Grid>
+          <Grid item xs={6} sm={2}>
+            <NewProductButton
+              refetchProducts={refetch}
+            />
           </Grid>
         </Grid>
       </Paper>
