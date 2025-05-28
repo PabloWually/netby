@@ -31,6 +31,9 @@ public class ProductDbContext : DbContext
 
       entity.Property(e => e.Price)
         .HasColumnType("decimal(18,2)");
+
+      entity.Property(e => e.Stock)
+        .IsRequired();
     });
   }
 }
