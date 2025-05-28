@@ -24,6 +24,7 @@ import { NewProductButton } from "./NewProductButton";
 import { useDeleteProducts } from "../../hooks/useDeleteProduct";
 import ProductForm from "./ProductForms";
 import { useUpdateProducts } from "../../hooks/useUpdateProduct";
+import TransactionProductButton from "../transactions/TransactionProductButton";
 
 export const ProductsTable = () => {
   const [paginationModel, setPaginationModel] = useState({
@@ -134,6 +135,22 @@ export const ProductsTable = () => {
         }
         return "";
       },
+    },
+        {
+      field: "transactions",
+      headerName: "Transacciones",
+      width: 150,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <TransactionProductButton
+          productId={params.row.id}
+          size="small"
+          onTransactionComplete={() => {
+            refetch();
+          }}
+        />
+      ),
     },
     {
       field: "actions",
