@@ -13,16 +13,34 @@ import {
   MenuItem,
   Grid,
   Paper,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { NewProductButton } from "./NewProductButton";
+import { useDeleteProducts } from "../../hooks/useDeleteProduct";
+import ProductForm from "./ProductForms";
+import { useUpdateProducts } from "../../hooks/useUpdateProduct";
 
 export const ProductsTable = () => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
+
+  const { mutate: deleteProduct, isLoading: isDeleting } = useDeleteProducts();
+  const {
+    mutate: updateProduct,
+    isLoading: isUpdating,
+    error: updateError,
+  } = useUpdateProducts();
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const [filterValue, setFilterValue] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -36,6 +54,38 @@ export const ProductsTable = () => {
     filterValue,
     categoryFilter
   );
+
+  const handleEditClick = (product) => {
+    setSelectedProduct(product);
+    setEditModalOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleUpdateProduct = (updatedProduct) => {
+    updateProduct(updatedProduct, {
+      onSuccess: () => {
+        refetch();
+        handleEditClose();
+      },
+      onError: (error) => {
+        console.error("Error al actualizar el producto:", error);
+      },
+    });
+  };
+
+  const handleDeleteProduct = (id) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+      deleteProduct(id, {
+        onSuccess: () => {
+          refetch();
+        },
+      });
+    }
+  };
 
   const handleSearch = () => {
     setFilterValue(tempFilterValue);
@@ -85,6 +135,37 @@ export const ProductsTable = () => {
         return "";
       },
     },
+    {
+      field: "actions",
+      headerName: "Acciones",
+      width: 120,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <Box sx={{ display: "flex" }}>
+          <Tooltip title="Editar">
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => handleEditClick(params.row)}
+              disabled={isDeleting}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Eliminar">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => handleDeleteProduct(params.row.id)}
+              disabled={isDeleting}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
   ];
 
   const categories = [
@@ -95,7 +176,7 @@ export const ProductsTable = () => {
     "Deportes",
     "Comida",
     "Libros",
-    "Tech"
+    "Tech",
   ];
 
   useEffect(() => {
@@ -183,9 +264,7 @@ export const ProductsTable = () => {
             </Button>
           </Grid>
           <Grid item xs={6} sm={2}>
-            <NewProductButton
-              refetchProducts={refetch}
-            />
+            <NewProductButton refetchProducts={refetch} />
           </Grid>
         </Grid>
       </Paper>
@@ -211,6 +290,14 @@ export const ProductsTable = () => {
           }}
         />
       </Box>
+      <ProductForm
+        open={editModalOpen}
+        onClose={handleEditClose}
+        onSubmit={handleUpdateProduct}
+        initialData={selectedProduct}
+        isLoading={isUpdating}
+        error={updateError}
+      />
     </Box>
   );
 };

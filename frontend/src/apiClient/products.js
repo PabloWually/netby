@@ -9,6 +9,11 @@ export const apiProducts = (client) => ({
 
     return response.data;
   },
+  deleteProduct: async (productId) => {
+    const response = await client.delete(`/products/${productId}`);
+
+    return response.data;
+  },
   getProducts: async (page, pageSize, name, category) => {
     const params = {};
 
@@ -17,7 +22,7 @@ export const apiProducts = (client) => ({
     if (category) params.category = category;
     if (name) params.name = name;
 
-    const response = await client.get("/products", {params});
+    const response = await client.get("/products", { params });
     return response.data;
   },
 });
