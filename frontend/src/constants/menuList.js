@@ -16,9 +16,9 @@ export const MenuList = [
     icon: InventoryIcon,
   },
   {
-    id: "clients",
-    title: "Clientes",
-    url: "/clients",
+    id: "transactions",
+    title: "Transacciones",
+    url: "/transactions",
     icon: PersonIcon,
   }
 ]
